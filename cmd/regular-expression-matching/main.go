@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
 	str := "aaaaaaaaaaaaab"
 	pat := "a*a*a*a*a*a*a*a*a*a*c"
+	t := time.Now()
 	fmt.Println(isMatch(str, pat))
+	fmt.Println(time.Now().Sub(t))
 }
 
 func isMatch(s, p string) bool {
