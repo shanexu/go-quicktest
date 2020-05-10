@@ -10,7 +10,7 @@ func main() {
 	pat := "a*a*a*a*a*a*a*a*a*a*c"
 	t := time.Now()
 	fmt.Println(isMatch(str, pat))
-	fmt.Println(time.Now().Sub(t))
+	fmt.Println(time.Since(t))
 }
 
 func isMatch(s, p string) bool {
@@ -115,7 +115,7 @@ func (m *Many) Match(source []rune) []State {
 			{source[1:], m},
 		}
 	}
-	return []State {
+	return []State{
 		{source, m.next},
 	}
 }
@@ -160,12 +160,12 @@ func compile(str string) Pattern {
 					m := &ManyAny{}
 					p.SetNext(m)
 					p = m
-					i+=2
+					i += 2
 				} else {
 					o := &OneAny{}
 					p.SetNext(o)
 					p = o
-					i+=1
+					i += 1
 				}
 			default:
 				if start == -1 {
@@ -181,9 +181,9 @@ func compile(str string) Pattern {
 					ma := &Many{r: r0}
 					p.SetNext(ma)
 					p = ma
-					i+=2
+					i += 2
 				} else {
-					i+=1
+					i += 1
 				}
 			}
 		} else {
@@ -202,11 +202,11 @@ func compile(str string) Pattern {
 				if start == -1 {
 					start = i
 				}
-				c := &Constant{rs: rs[start:i+1]}
+				c := &Constant{rs: rs[start : i+1]}
 				p.SetNext(c)
 				p = c
 			}
-			i+=1
+			i += 1
 		}
 
 	}
