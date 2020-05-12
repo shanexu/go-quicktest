@@ -3,11 +3,23 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("hello world")
+	s := post2nfa([]rune{'a', '*', 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, AnyChar, Cat})
+	l1 := make(List, 0, nstate)
+	l2 := make(List, 0, nstate)
+	m := match(s, []rune("aaaaaaaaaaaaab"), l1, l2)
+	fmt.Println(m)
 }
 
-const Split rune = 256
-const Match rune = 257
+const (
+	Split rune = iota + 256
+	Cat
+	AnyChar
+	Match
+)
+
+var matchstate = State{Match, nil, nil, 0}
+var nstate int
+var listid int
 
 type State struct {
 	c        rune
@@ -17,44 +29,146 @@ type State struct {
 }
 
 func state(c rune, out, out1 *State) *State {
+	nstate++
 	return &State{c: c, out: out, out1: out1}
 }
 
 type Frag struct {
 	start *State
-	out   []*State
+	out   *Ptrlist
 }
 
-func frag(s *State, out []*State) *Frag {
+func frag(s *State, out *Ptrlist) *Frag {
 	return &Frag{s, out}
 }
 
-func patch(l []*State, s *State) {
-	for _, i := range l {
-		i.out = s
+type Ptrlist struct {
+	next *Ptrlist
+	s    **State
+}
+
+func list1(outp **State) *Ptrlist {
+	p := &Ptrlist{s: outp}
+	return p
+}
+
+func patch(l *Ptrlist, s *State) {
+	var next *Ptrlist
+	for ; l != nil; l = next {
+		next = l.next
+		*l.s = s
 	}
 }
 
-func str2nfa(str string) *State {
-	stack := make(*Frag, 1000)
+func (l1 *Ptrlist) append(l2 *Ptrlist) *Ptrlist {
+	oldl1 := l1
+	for l1.next != nil {
+		l1 = l1.next
+	}
+	l1.next = l2
+	return oldl1
+}
+
+func post2nfa(postfix []rune) *State {
+	if len(postfix) == 0 {
+		return nil
+	}
+
+	stack := make([]*Frag, 0, 1024)
 	push := func(s *Frag) {
 		stack = append(stack, s)
 	}
 
-	pop := func(stack []*Frag) *Frag {
+	pop := func() *Frag {
 		f := stack[len(stack)-1]
-		stack = stack[:len(stack)]
+		stack = stack[:len(stack)-1]
 		return f
 	}
-
-	for r := range rs {
-		switch r {
+	for _, p := range postfix {
+		switch p {
+		case Cat:
+			e2 := pop()
+			e1 := pop()
+			patch(e1.out, e2.start)
+			push(frag(e1.start, e2.out))
+		case '|':
+			e2 := pop()
+			e1 := pop()
+			s := state(Split, e1.start, e2.start)
+			push(frag(s, e1.out.append(e2.out)))
+		case '?':
+			e := pop()
+			s := state(Split, e.start, nil)
+			push(frag(s, e.out.append(list1(&s.out1))))
 		case '*':
 			e := pop()
 			s := state(Split, e.start, nil)
+			patch(e.out, s)
+			push(frag(s, list1(&s.out1)))
+		case AnyChar:
+			s := state(AnyChar, nil, nil)
+			push(frag(s, list1(&s.out)))
 		default:
-			s := state(r, nil, nil)
-			push(frag(s, nil))
+			s := state(p, nil, nil)
+			push(frag(s, list1(&s.out)))
 		}
 	}
+	e := pop()
+	if len(stack) != 0 {
+		return nil
+	}
+	patch(e.out, &matchstate)
+	return e.start
+}
+
+type List []*State
+
+func startlist(start *State, l *List) *List {
+	*l = (*l)[0:]
+	listid++
+	addState(l, start)
+	return l
+}
+
+func ismatch(l *List) bool {
+	for i := range *l {
+		if (*l)[i] == &matchstate {
+			return true
+		}
+	}
+	return false
+}
+
+func addState(l *List, s *State) {
+	if s == nil || s.lastList == listid {
+		return
+	}
+	s.lastList = listid
+	if s.c == Split {
+		addState(l, s.out)
+		addState(l, s.out1)
+		return
+	}
+	*l = append(*l, s)
+}
+
+func step(clist *List, c rune, nlist *List) {
+	listid++
+	*nlist = (*nlist)[0:]
+	for i := range *clist {
+		s := (*clist)[i]
+		if s.c == c || s.c == AnyChar {
+			addState(nlist, s.out)
+		}
+	}
+}
+
+func match(start *State, s []rune, l1 List, l2 List) bool {
+	clist := startlist(start, &l1)
+	nlist := &l2
+	for _, c := range s {
+		step(clist, c, nlist)
+		clist, nlist = nlist, clist
+	}
+	return ismatch(clist)
 }
