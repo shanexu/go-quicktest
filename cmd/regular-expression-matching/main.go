@@ -1,214 +1,181 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
 func main() {
-	str := "aaaaaaaaaaaaab"
-	pat := "a*a*a*a*a*a*a*a*a*a*c"
-	t := time.Now()
-	fmt.Println(isMatch(str, pat))
-	fmt.Println(time.Since(t))
+	fmt.Println(isMatch("a", "."))
+	fmt.Println(isMatch("aa", ".*"))
+	fmt.Println(isMatch("ab", "a*"))
 }
 
 func isMatch(s, p string) bool {
-	pattern := compile(p)
-	return match(State{
-		rs: []rune(s),
-		p:  pattern,
-	})
+	if len(p) == 0 {
+		return len(s) == 0
+	}
+	pattern := compile([]rune(p))
+	return pattern.match([]rune(s))
 }
 
-func match(state State) bool {
-	ss := state.p.Match(state.rs)
-	for _, s := range ss {
-		if s.p == nil {
-			if len(s.rs) == 0 {
-				return true
-			}
-			continue
+const (
+	Split rune = iota + 256
+	AnyChar
+	Match
+)
+
+type Regexp struct {
+	nstate     int
+	l1         List
+	l2         List
+	start      *State
+	listid     int
+	matchState *State
+}
+
+func (re *Regexp) state(c rune, out, out1 *State) *State {
+	re.nstate++
+	return &State{c: c, out: out, out1: out1}
+}
+
+func (re *Regexp) match(s []rune) bool {
+	re.l1 = make(List, 0, re.nstate)
+	re.l2 = make(List, 0, re.nstate)
+	clist := re.startList(re.start, &re.l1)
+	nlist := &re.l2
+	for _, c := range s {
+		re.step(clist, c, nlist)
+		clist, nlist = nlist, clist
+	}
+	return re.ismatch(clist)
+}
+
+type State struct {
+	c        rune
+	out      *State
+	out1     *State
+	lastList int
+}
+
+type Frag struct {
+	start *State
+	out   *PtrList
+}
+
+func frag(s *State, out *PtrList) *Frag {
+	return &Frag{s, out}
+}
+
+type PtrList struct {
+	next *PtrList
+	s    **State
+}
+
+func list1(outp **State) *PtrList {
+	p := &PtrList{s: outp}
+	return p
+}
+
+func patch(l *PtrList, s *State) {
+	var next *PtrList
+	for ; l != nil; l = next {
+		next = l.next
+		*l.s = s
+	}
+}
+
+func (l1 *PtrList) append(l2 *PtrList) *PtrList {
+	oldl1 := l1
+	for l1.next != nil {
+		l1 = l1.next
+	}
+	l1.next = l2
+	return oldl1
+}
+
+type Stack []*Frag
+
+func stack(size int) Stack {
+	return make(Stack, 0, size)
+}
+
+func (s *Stack) push(f *Frag) {
+	*s = append(*s, f)
+}
+
+func (s *Stack) pop() *Frag {
+	f := (*s)[len(*s)-1]
+	*s = (*s)[:len(*s)-1]
+	return f
+}
+
+func compile(rs []rune) *Regexp {
+	re := &Regexp{}
+	st := stack(128)
+	for _, p := range rs {
+		switch p {
+		case '.':
+			s := re.state(AnyChar, nil, nil)
+			st.push(frag(s, list1(&s.out)))
+		case '*':
+			e := st.pop()
+			s := re.state(Split, e.start, nil)
+			patch(e.out, s)
+			st.push(frag(s, list1(&s.out1)))
+		default:
+			s := re.state(p, nil, nil)
+			st.push(frag(s, list1(&s.out)))
 		}
-		if match(s) {
+	}
+	for ; len(st) > 1; {
+		e2 := st.pop()
+		e1 := st.pop()
+		patch(e1.out, e2.start)
+		st.push(frag(e1.start, e2.out))
+	}
+	e := st.pop()
+	re.matchState = &State{Match, nil, nil, 0}
+	patch(e.out, re.matchState)
+	re.start = e.start
+	return re
+}
+
+type List []*State
+
+func (re *Regexp) startList(start *State, l *List) *List {
+	*l = (*l)[:0]
+	re.listid++
+	re.addState(l, start)
+	return l
+}
+
+func (re *Regexp) ismatch(l *List) bool {
+	for i := range *l {
+		if (*l)[i] == re.matchState {
 			return true
 		}
 	}
 	return false
 }
 
-type Pattern interface {
-	Match(runes []rune) []State
-	SetNext(next Pattern)
-}
-
-type State struct {
-	rs []rune
-	p  Pattern
-}
-
-type Begin struct {
-	next Pattern
-}
-
-func (b *Begin) SetNext(next Pattern) {
-	b.next = next
-}
-
-func (b *Begin) Match(source []rune) []State {
-	return []State{{source, b.next}}
-}
-
-type Constant struct {
-	rs   []rune
-	next Pattern
-}
-
-func (c *Constant) SetNext(next Pattern) {
-	c.next = next
-}
-
-func (c *Constant) Match(source []rune) []State {
-	if len(source) < len(c.rs) {
-		return nil
+func (re *Regexp) addState(l *List, s *State) {
+	if s == nil || s.lastList == re.listid {
+		return
 	}
-	for i := 0; i < len(c.rs); i++ {
-		if c.rs[i] != source[i] {
-			return nil
+	s.lastList = re.listid
+	if s.c == Split {
+		re.addState(l, s.out)
+		re.addState(l, s.out1)
+		return
+	}
+	*l = append(*l, s)
+}
+
+func (re *Regexp) step(clist *List, c rune, nlist *List) {
+	re.listid++
+	*nlist = (*nlist)[:0]
+	for i := range *clist {
+		s := (*clist)[i]
+		if s.c == c || s.c == AnyChar {
+			re.addState(nlist, s.out)
 		}
 	}
-	return []State{{source[len(c.rs):], c.next}}
-}
-
-type OneAny struct {
-	next Pattern
-}
-
-func (a *OneAny) SetNext(next Pattern) {
-	a.next = next
-}
-
-func (a *OneAny) Match(source []rune) []State {
-	if len(source) < 1 {
-		return nil
-	}
-	return []State{{source[1:], a.next}}
-}
-
-type Many struct {
-	r    rune
-	next Pattern
-}
-
-func (m *Many) SetNext(next Pattern) {
-	m.next = next
-}
-
-func (m *Many) Match(source []rune) []State {
-	if len(source) == 0 {
-		return []State{{source, m.next}}
-	}
-	if source[0] == m.r {
-		return []State{
-			{source, m.next},
-			{source[1:], m.next},
-			{source[1:], m},
-		}
-	}
-	return []State{
-		{source, m.next},
-	}
-}
-
-type ManyAny struct {
-	next Pattern
-}
-
-func (m *ManyAny) SetNext(next Pattern) {
-	m.next = next
-}
-
-func (m *ManyAny) Match(source []rune) []State {
-	if len(source) == 0 {
-		return []State{{source, m.next}}
-	}
-	return []State{
-		{source, m.next},
-		{source[1:], m.next},
-		{source[1:], m},
-	}
-}
-
-func compile(str string) Pattern {
-	rs := []rune(str)
-	var p Pattern = &Begin{}
-	begin := p
-	start := -1
-	for i := 0; i < len(rs); {
-		r0 := rs[i]
-		if i+1 < len(rs) {
-			r1 := rs[i+1]
-			switch r0 {
-			case '.':
-				if start != -1 {
-					c := &Constant{rs[start:i], nil}
-					p.SetNext(c)
-					p = c
-					start = -1
-				}
-				if r1 == '*' {
-					m := &ManyAny{}
-					p.SetNext(m)
-					p = m
-					i += 2
-				} else {
-					o := &OneAny{}
-					p.SetNext(o)
-					p = o
-					i += 1
-				}
-			default:
-				if start == -1 {
-					start = i
-				}
-				if r1 == '*' {
-					if start != i {
-						c := &Constant{rs[start:i], nil}
-						p.SetNext(c)
-						p = c
-					}
-					start = -1
-					ma := &Many{r: r0}
-					p.SetNext(ma)
-					p = ma
-					i += 2
-				} else {
-					i += 1
-				}
-			}
-		} else {
-			switch r0 {
-			case '.':
-				if start != -1 {
-					c := &Constant{rs[start:i], nil}
-					p.SetNext(c)
-					p = c
-					start = -1
-				}
-				o := &OneAny{}
-				p.SetNext(o)
-				p = o
-			default:
-				if start == -1 {
-					start = i
-				}
-				c := &Constant{rs: rs[start : i+1]}
-				p.SetNext(c)
-				p = c
-			}
-			i += 1
-		}
-
-	}
-	return begin
 }

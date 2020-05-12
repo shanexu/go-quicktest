@@ -3,10 +3,10 @@ package main
 import "fmt"
 
 func main() {
-	s := post2nfa([]rune{'a', '*', 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, 'a', '*', Cat, AnyChar, Cat})
+	s := post2nfa([]rune{'s', '*'})
 	l1 := make(List, 0, nstate)
 	l2 := make(List, 0, nstate)
-	m := match(s, []rune("aaaaaaaaaaaaab"), l1, l2)
+	m := match(s, []rune("si"), l1, l2)
 	fmt.Println(m)
 }
 
@@ -105,7 +105,7 @@ func post2nfa(postfix []rune) *State {
 			s := state(Split, e.start, nil)
 			patch(e.out, s)
 			push(frag(s, list1(&s.out1)))
-		case AnyChar:
+		case '.':
 			s := state(AnyChar, nil, nil)
 			push(frag(s, list1(&s.out)))
 		default:
@@ -124,7 +124,7 @@ func post2nfa(postfix []rune) *State {
 type List []*State
 
 func startlist(start *State, l *List) *List {
-	*l = (*l)[0:]
+	*l = (*l)[:0]
 	listid++
 	addState(l, start)
 	return l
@@ -154,7 +154,7 @@ func addState(l *List, s *State) {
 
 func step(clist *List, c rune, nlist *List) {
 	listid++
-	*nlist = (*nlist)[0:]
+	*nlist = (*nlist)[:0]
 	for i := range *clist {
 		s := (*clist)[i]
 		if s.c == c || s.c == AnyChar {
