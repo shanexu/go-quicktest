@@ -12,11 +12,8 @@ func main() {
 	ob := rxgo.FromChannel(ch).Debounce(rxgo.WithDuration(time.Second * 5))
 	go func() {
 		ch := ob.Observe()
-		for {
-			select {
-			case i := <-ch:
-				fmt.Println(time.Now().Format(time.RFC3339), "->", i.V)
-			}
+		for i := range ch {
+			fmt.Println(time.Now().Format(time.RFC3339), "->", i.V)
 		}
 	}()
 
@@ -24,13 +21,10 @@ func main() {
 		tick := time.NewTicker(time.Second * 10)
 		defer tick.Stop()
 		i := 0
-		for {
-			select {
-			case n := <-tick.C:
-				i++
-				ch <- rxgo.Of(i)
-				fmt.Println(n.Format(time.RFC3339), "<-", i)
-			}
+		for n := range tick.C {
+			i++
+			ch <- rxgo.Of(i)
+			fmt.Println(n.Format(time.RFC3339), "<-", i)
 		}
 	}()
 
