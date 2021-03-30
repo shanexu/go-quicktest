@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/tealeg/xlsx"
 )
@@ -20,4 +21,7 @@ func main() {
 		}
 	}
 
+	t, _ := time.ParseInLocation("2006-01-02", "2020-01-01", time.Local)
+
+	fmt.Println(t)
 }
