@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/cenkalti/backoff/v4 v4.1.0 // indirect
-	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
+	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/reactivex/rxgo/v2 v2.4.0
