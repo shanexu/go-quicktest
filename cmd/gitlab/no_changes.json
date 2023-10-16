@@ -1,0 +1,80 @@
+{
+  "id": 10750,
+  "iid": 17,
+  "project_id": 1107,
+  "title": "hellworld",
+  "description": null,
+  "state": "opened",
+  "created_at": "2021-08-06T13:50:48.172+08:00",
+  "updated_at": "2021-08-06T13:50:48.172+08:00",
+  "merged_by": null,
+  "merged_at": null,
+  "closed_by": null,
+  "closed_at": null,
+  "target_branch": "master",
+  "source_branch": "dev",
+  "user_notes_count": 0,
+  "upvotes": 0,
+  "downvotes": 0,
+  "author": {
+    "id": 1,
+    "name": "Administrator",
+    "username": "root",
+    "state": "active",
+    "avatar_url": null,
+    "web_url": "http://gitlab.sumscope.com/root"
+  },
+  "assignees": [],
+  "assignee": null,
+  "reviewers": [],
+  "source_project_id": 1107,
+  "target_project_id": 1107,
+  "labels": [],
+  "work_in_progress": false,
+  "milestone": null,
+  "merge_when_pipeline_succeeds": false,
+  "merge_status": "cannot_be_merged",
+  "sha": "5e2335a0fe1194a0209e70b5824df0cc4daee431",
+  "merge_commit_sha": null,
+  "squash_commit_sha": null,
+  "discussion_locked": null,
+  "should_remove_source_branch": null,
+  "force_remove_source_branch": null,
+  "reference": "!17",
+  "references": {
+    "short": "!17",
+    "relative": "!17",
+    "full": "devops/impala!17"
+  },
+  "web_url": "http://gitlab.sumscope.com/devops/impala/-/merge_requests/17",
+  "time_stats": {
+    "time_estimate": 0,
+    "total_time_spent": 0,
+    "human_time_estimate": null,
+    "human_total_time_spent": null
+  },
+  "squash": false,
+  "task_completion_status": {
+    "count": 0,
+    "completed_count": 0
+  },
+  "has_conflicts": true,
+  "blocking_discussions_resolved": true,
+  "subscribed": true,
+  "changes_count": null,
+  "latest_build_started_at": null,
+  "latest_build_finished_at": null,
+  "first_deployed_to_production_at": null,
+  "pipeline": null,
+  "head_pipeline": null,
+  "diff_refs": {
+    "base_sha": "5e2335a0fe1194a0209e70b5824df0cc4daee431",
+    "head_sha": "5e2335a0fe1194a0209e70b5824df0cc4daee431",
+    "start_sha": "450839a47be1ae0ad739b338ae84e99ad9dfb5f8"
+  },
+  "merge_error": null,
+  "first_contribution": false,
+  "user": {
+    "can_merge": true
+  }
+}
