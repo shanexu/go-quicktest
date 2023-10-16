@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	host := flag.String("host","127.0.0.1", "127.0.0.1")
+	host := flag.String("host", "127.0.0.1", "127.0.0.1")
 	port := flag.Int("port", 389, "389")
 	username := flag.String("username", "username", "username")
 	password := flag.String("password", "password", "password")
@@ -36,12 +36,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	searchAttributes := strings.Split(*attributes, ",")
+	if len(*attributes) == 0 {
+		searchAttributes = []string{}
+	}
 	// Search for the given username
 	searchRequest := ldap.NewSearchRequest(
 		*baseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf(*searchFilter, *username),
-		strings.Split(*attributes, ","),
+		searchAttributes,
 		nil,
 	)
 
