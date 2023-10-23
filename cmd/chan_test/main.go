@@ -7,15 +7,6 @@ import (
 	"time"
 )
 
-type Sender struct {
-	msgs chan string
-	ctx  context.Context
-}
-
-func (s *Sender) startSend() {
-
-}
-
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cancel()
@@ -47,7 +38,7 @@ func main() {
 		for {
 			select {
 			case t := <-ticker.C:
-				msgs <- fmt.Sprintf("%s", t)
+				msgs <- t.String()
 			case <-ctx.Done():
 				break forloop
 			}
