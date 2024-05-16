@@ -7,6 +7,7 @@ require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/go-ldap/ldap/v3 v3.2.4
+	github.com/gorilla/websocket v1.4.1
 	github.com/lrita/cmap v0.0.0-20220613164007-7fbf4a5bd437
 	github.com/panjf2000/gnet/v2 v2.3.3
 	github.com/reactivex/rxgo/v2 v2.4.0

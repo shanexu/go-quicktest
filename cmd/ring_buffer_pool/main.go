@@ -9,17 +9,43 @@ import (
 func main() {
 	rb := ringbuffer.Get()
 	rb.WriteString("hello")
-	fmt.Println(rb.Buffered())
-	fmt.Println(rb.Len())
-	fmt.Println(rb.IsFull())
-	fmt.Println(rb.Cap())
+	fmt.Println("Buffered:", rb.Buffered())
+	fmt.Println("Len:", rb.Len())
+	fmt.Println("IsFull: ", rb.IsFull())
+	fmt.Println("Cap:", rb.Cap())
+
+	fmt.Println()
 
 	for i := 0; i < 204; i++ {
 		rb.WriteString("hello")
 	}
 
-	fmt.Println(rb.Buffered())
-	fmt.Println(rb.Len())
-	fmt.Println(rb.IsFull())
-	fmt.Println(rb.Cap())
+	fmt.Println("Buffered:", rb.Buffered())
+	fmt.Println("Len:", rb.Len())
+	fmt.Println("IsFull:", rb.IsFull())
+	fmt.Println("Cap:", rb.Cap())
+
+	fmt.Println()
+
+	for i := 0; i < 205; i++ {
+		rb.WriteString("hello")
+	}
+
+	fmt.Println("Buffered:", rb.Buffered())
+	fmt.Println("Len:", rb.Len())
+	fmt.Println("IsFull:", rb.IsFull())
+	fmt.Println("Cap:", rb.Cap())
+
+	fmt.Println()
+
+	for i := 0; i < 410; i++ {
+		rb.WriteString("hello")
+	}
+
+	fmt.Println("Buffered:", rb.Buffered())
+	fmt.Println("Len:", rb.Len())
+	fmt.Println("IsFull:", rb.IsFull())
+	fmt.Println("Cap:", rb.Cap())
+
+	ringbuffer.Put(rb)
 }
