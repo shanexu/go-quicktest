@@ -11,6 +11,7 @@ require (
 	github.com/lrita/cmap v0.0.0-20220613164007-7fbf4a5bd437
 	github.com/panjf2000/gnet/v2 v2.3.3
 	github.com/reactivex/rxgo/v2 v2.4.0
+	github.com/samber/lo v1.39.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/xanzy/go-gitlab v0.93.1
 	github.com/xuri/excelize/v2 v2.5.0
@@ -50,6 +51,7 @@ require (
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
