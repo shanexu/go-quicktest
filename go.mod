@@ -9,6 +9,7 @@ require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/go-ldap/ldap/v3 v3.2.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gorilla/websocket v1.4.1
 	github.com/lrita/cmap v0.0.0-20220613164007-7fbf4a5bd437
 	github.com/panjf2000/gnet/v2 v2.3.3
@@ -32,9 +33,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.1 // indirect
-	github.com/gofiber/fiber/v2 v2.52.5 // indirect
-	github.com/gofiber/fiber/v3 v3.0.0-beta.3 // indirect
-	github.com/gofiber/utils/v2 v2.0.0-beta.5 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
