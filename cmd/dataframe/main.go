@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
 	"strings"
 	"time"
 
@@ -18,6 +19,9 @@ import (
 func main() {
 	secret := flag.String("secret", "", "secret")
 	database := flag.String("database", "", "database")
+	show := flag.Bool("show", false, "show")
+	format := flag.String("format", "svg", "format")
+	output := flag.String("output", "", "output")
 
 	flag.Parse()
 
@@ -67,10 +71,28 @@ func main() {
 		YValues: df.Series[1].(*dataframe.SeriesFloat64).Values,
 	}
 	graph := chart.Chart{Series: []chart.Series{cs}}
-	plt := lo.Must1(plot.Open("Weights", 450, 300))
-	graph.Render(chart.SVG, plt)
-	plt.Display(plot.None)
-	<-plt.Closed
+
+	if *output != "" {
+		f := lo.Must1(os.Create(*output))
+		defer f.Close()
+		var r func(int, int) (chart.Renderer, error)
+		switch *format {
+		case "svg":
+			r = chart.SVG
+		case "png":
+			r = chart.PNG
+		default:
+			r = chart.SVG
+		}
+		lo.Must0(graph.Render(r, f))
+	}
+
+	if *show {
+		plt := lo.Must1(plot.Open("Weights", 450, 300))
+		graph.Render(chart.SVG, plt)
+		plt.Display(plot.None)
+		<-plt.Closed
+	}
 }
 
 func FetchAllRows(ctx context.Context, client *notionapi.Client, id notionapi.DatabaseID, requestBody *notionapi.DatabaseQueryRequest) ([]notionapi.Page, error) {
