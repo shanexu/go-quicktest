@@ -11,6 +11,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gorilla/websocket v1.4.1
+	github.com/jomei/notionapi v1.13.1
 	github.com/lrita/cmap v0.0.0-20220613164007-7fbf4a5bd437
 	github.com/panjf2000/gnet/v2 v2.3.3
 	github.com/reactivex/rxgo/v2 v2.4.0
@@ -33,16 +34,13 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/apache/thrift v0.0.0-20181112125854-24918abba929 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.0 // indirect
 	github.com/cnkei/gospline v0.0.0-20191204072713-842a72f86331 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.1 // indirect
-	github.com/goccy/go-json v0.7.6 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -52,10 +50,6 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/icza/gox v0.0.0-20200320174535-a6ff52ab3d90 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/juju/clock v0.0.0-20190205081909-9c5c9712527c // indirect
-	github.com/juju/errors v0.0.0-20200330140219-3fe23663418f // indirect
-	github.com/juju/loggo v0.0.0-20200526014432-9ce3a2e09b5e // indirect
-	github.com/juju/utils/v2 v2.0.0-20200923005554-4646bfea2ef1 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -70,13 +64,11 @@ require (
 	github.com/richardlehane/mscfb v1.0.3 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/rocketlaunchr/mysql-go v1.1.3 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.55.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	github.com/xitongsys/parquet-go v1.5.2 // indirect
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
 	github.com/zserge/lorca v0.1.11-0.20240107174849-36a77caf0fc7 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
@@ -88,6 +80,5 @@ require (
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
-	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

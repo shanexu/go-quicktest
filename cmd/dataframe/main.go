@@ -2,14 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
-	"strconv"
+	"flag"
+	"strings"
 	"time"
 
+	"github.com/jomei/notionapi"
 	"github.com/rocketlaunchr/dataframe-go"
 	"github.com/rocketlaunchr/dataframe-go/forecast/interpolation"
-	"github.com/rocketlaunchr/dataframe-go/imports"
 	"github.com/rocketlaunchr/dataframe-go/plot"
 	"github.com/rocketlaunchr/dataframe-go/utils/utime"
 	"github.com/samber/lo"
@@ -17,35 +16,36 @@ import (
 )
 
 func main() {
-	f, _ := os.Open("./cmd/dataframe/example.csv")
-	defer f.Close()
-	csvDf, _ := imports.LoadFromCSV(context.Background(), f)
-	data := make(map[time.Time]float64)
+	secret := flag.String("secret", "", "secret")
+	database := flag.String("database", "", "database")
+
+	flag.Parse()
+
+	client := notionapi.NewClient(notionapi.Token(*secret))
+
+	pages := lo.Must1(FetchAllRows(context.Background(), client, notionapi.DatabaseID(*database), &notionapi.DatabaseQueryRequest{Sorts: []notionapi.SortObject{{
+		Property:  "Date",
+		Direction: notionapi.SortOrderASC,
+	}}}))
+
 	var beginTime time.Time
-	iter := csvDf.ValuesIterator(dataframe.ValuesOptions{InitialRow: 0, Step: 1})
-	for {
-		row, vals, _ := iter()
-		if row == nil {
-			break
-		}
-		d, _ := vals["Date"].(string)
-		day, _ := time.ParseInLocation("2006/01/02", d, time.Local)
+	data := make(map[time.Time]float64)
+	for _, page := range pages {
+		dateStr := strings.Split(page.Properties["Date"].(*notionapi.DateProperty).Date.Start.String(), "T")[0]
+		date := lo.Must1(time.ParseInLocation("2006-01-02", dateStr, time.Local))
 		if beginTime.IsZero() {
-			beginTime = day
+			beginTime = date
 		}
-		w, _ := vals["Weight"].(string)
-		weight, _ := strconv.ParseFloat(w, 64)
-		weight /= 1000
-		fmt.Println(day, weight)
-		data[day] = weight
+		weight := page.Properties["Weight"].(*notionapi.NumberProperty).Number / 1000
+		data[date] = weight
 	}
 	now := time.Now()
 	endTime := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local)
-	dates, _ := utime.NewSeriesTime(context.Background(), "date", "1D", beginTime, false, utime.NewSeriesTimeOptions{
+	dateSeries, _ := utime.NewSeriesTime(context.Background(), "date", "1D", beginTime, false, utime.NewSeriesTimeOptions{
 		Until: &endTime,
 	})
-	weightVals := make([]interface{}, 0, len(dates.Values))
-	for _, value := range dates.Values {
+	weightVals := make([]interface{}, 0, len(dateSeries.Values))
+	for _, value := range dateSeries.Values {
 		val, ok := data[*value]
 		if ok {
 			weightVals = append(weightVals, val)
@@ -53,31 +53,43 @@ func main() {
 			weightVals = append(weightVals, nil)
 		}
 	}
-
-	weights := dataframe.NewSeriesFloat64("weight", nil, weightVals...)
-	df := dataframe.NewDataFrame(dates, weights)
-	fmt.Println(df.String())
-	_, err := interpolation.Interpolate(context.Background(), df, interpolation.InterpolateOptions{
+	weightSeries := dataframe.NewSeriesFloat64("weight", nil, weightVals...)
+	df := dataframe.NewDataFrame(dateSeries, weightSeries)
+	lo.Must1(interpolation.Interpolate(context.Background(), df, interpolation.InterpolateOptions{
 		Method:  interpolation.Spline{Order: 3},
 		InPlace: true,
-	})
-	if err != nil {
-		panic(err)
-	}
+	}))
 	cs := chart.TimeSeries{
-		Name: "Weight",
+		Name: "Weights",
 		XValues: lo.Map(df.Series[0].(*dataframe.SeriesTime).Values, func(item *time.Time, index int) time.Time {
 			return *item
 		}),
 		YValues: df.Series[1].(*dataframe.SeriesFloat64).Values,
 	}
-	fmt.Println(df.String())
 	graph := chart.Chart{Series: []chart.Series{cs}}
-	plt, err := plot.Open("Weights", 450, 300)
-	if err != nil {
-		panic(err)
-	}
+	plt := lo.Must1(plot.Open("Weights", 450, 300))
 	graph.Render(chart.SVG, plt)
 	plt.Display(plot.None)
 	<-plt.Closed
+}
+
+func FetchAllRows(ctx context.Context, client *notionapi.Client, id notionapi.DatabaseID, requestBody *notionapi.DatabaseQueryRequest) ([]notionapi.Page, error) {
+	if requestBody != nil {
+		requestBody.PageSize = 2
+	}
+	resp, err := client.Database.Query(ctx, id, requestBody)
+	if err != nil {
+		return nil, err
+	}
+	var results []notionapi.Page
+	results = append(results, resp.Results...)
+	for resp.HasMore {
+		requestBody.StartCursor = resp.NextCursor
+		resp, err = client.Database.Query(ctx, id, requestBody)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, resp.Results...)
+	}
+	return results, nil
 }
