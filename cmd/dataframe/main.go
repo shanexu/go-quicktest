@@ -20,7 +20,6 @@ func main() {
 	secret := flag.String("secret", "", "secret")
 	database := flag.String("database", "", "database")
 	show := flag.Bool("show", false, "show")
-	format := flag.String("format", "svg", "format")
 	output := flag.String("output", "", "output")
 
 	flag.Parse()
@@ -73,18 +72,12 @@ func main() {
 	graph := chart.Chart{Series: []chart.Series{cs}}
 
 	if *output != "" {
-		f := lo.Must1(os.Create(*output))
-		defer f.Close()
-		var r func(int, int) (chart.Renderer, error)
-		switch *format {
-		case "svg":
-			r = chart.SVG
-		case "png":
-			r = chart.PNG
-		default:
-			r = chart.SVG
+		type render = func(int, int) (chart.Renderer, error)
+		for _, t := range []lo.Tuple2[string, render]{lo.T2("svg", chart.SVG), lo.T2("png", chart.PNG)} {
+			f := lo.Must1(os.Create(*output + "." + t.A))
+			lo.Must0(graph.Render(t.B, f))
+			lo.Must0(f.Close())
 		}
-		lo.Must0(graph.Render(r, f))
 	}
 
 	if *show {
