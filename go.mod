@@ -1,12 +1,12 @@
 module github.com/shanexu/go-quicktest
 
-go 1.24
+go 1.25.0
 
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/gizak/termui/v3 v3.1.0
-	github.com/go-ldap/ldap/v3 v3.2.4
+	github.com/go-ldap/ldap/v3 v3.4.14
 	github.com/gofiber/fiber/v2 v2.52.14
 	github.com/gorilla/websocket v1.5.3
 	github.com/jomei/notionapi v1.13.1
@@ -20,14 +20,14 @@ require (
 	github.com/xanzy/go-gitlab v0.93.1
 	github.com/xuri/excelize/v2 v2.5.0
 	go.uber.org/ratelimit v0.1.0
-	golang.org/x/net v0.26.0
+	golang.org/x/net v0.57.0
 	golang.org/x/time v0.5.0
 	nhooyr.io/websocket v1.8.7
 )
 
 require (
 	cloud.google.com/go v0.115.0 // indirect
-	github.com/Azure/go-ntlmssp v0.0.0-20200615164410-66371956d46c // indirect
+	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/DzananGanic/numericalgo v0.0.0-20170804125527-2b389385baf0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
@@ -36,7 +36,7 @@ require (
 	github.com/cnkei/gospline v0.0.0-20191204072713-842a72f86331 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.1 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.8 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
@@ -70,13 +70,13 @@ require (
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
 	github.com/zserge/lorca v0.1.11-0.20240107174849-36a77caf0fc7 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/crypto v0.24.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/image v0.19.0 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
