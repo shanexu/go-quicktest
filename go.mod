@@ -7,8 +7,8 @@ require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/go-ldap/ldap/v3 v3.2.4
-	github.com/gofiber/fiber/v2 v2.52.5
-	github.com/gorilla/websocket v1.4.1
+	github.com/gofiber/fiber/v2 v2.52.14
+	github.com/gorilla/websocket v1.5.3
 	github.com/jomei/notionapi v1.13.1
 	github.com/lrita/cmap v0.0.0-20220613164007-7fbf4a5bd437
 	github.com/panjf2000/gnet/v2 v2.3.3
@@ -44,7 +44,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/guptarohit/asciigraph v0.7.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/icza/gox v0.0.0-20200320174535-a6ff52ab3d90 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -73,9 +73,9 @@ require (
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/image v0.19.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
