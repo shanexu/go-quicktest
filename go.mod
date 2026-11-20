@@ -1,8 +1,6 @@
 module github.com/shanexu/go-quicktest
 
-go 1.21
-
-toolchain go1.22.5
+go 1.24
 
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
@@ -50,7 +48,7 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/icza/gox v0.0.0-20200320174535-a6ff52ab3d90 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
